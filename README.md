@@ -50,3 +50,8 @@ This analysis is conducted by a beginner data analyst, and the results should be
 The dataset used in this analysis may be subject to data privacy and usage restrictions. Therefore, it is not suitable for making individual health-related conclusions.
 
 # 1. Analyzing Pesticide Usage in Agriculture Fields in Glenn County, California
+
+# Conclusion 
+Pesticides find extensive application in agriculture, various occupational settings, and homes. A subset of the chemicals present in pesticides has been associated with cancer based on findings from laboratory experiments and epidemiological studies. Nevertheless, definitive proof connecting overall pesticide usage to cancer remains inconclusive.
+
+The diverse array of chemicals found in pesticides, combined with potential contributing factors to cancer among individuals exposed to these substances, renders it challenging to definitively establish direct connections between pesticide usage and cancer occurrences. Simultaneously, the available evidence is inadequate to conclusively ascertain the absence of any relationship between cancer and exposure to pesticides, whether through direct chemical contact or residual interactions.
