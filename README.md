@@ -25,7 +25,27 @@ This data analysis project aims to explore the potential relationship between pe
   
 - Cancer incidence data from local health departments or cancer registries.
 
-- Geospatial data for mapping and visualization purposes.
+- [Dataset 1] (https://wiki.cancer.org.au/policy/Position_statement_-_Pesticides_and_cancer#app1):
+
+The data offers a comprehensive position statement on the potential relationship between pesticides and the development of cancer. This authoritative stance is presented on the Cancer Council Australia's wiki platform.
+
+The webpage provides a thorough examination of the Cancer Council's viewpoint, likely incorporating scientific research, evidence, and informed analysis related to the impact of pesticide exposure on cancer risk. The inclusion of an appendix, denoted by "app1" in the URL, suggests the presence of supplementary resources or additional information that supports or elaborates on the main position statement.
+
+This dataset holds significant value for researchers, policymakers, healthcare professionals, and individuals interested in understanding the scientific consensus and expert opinion regarding the connection between pesticides and cancer. The dataset's reliability, affiliation with a reputable institution, and potential inclusion of references make it a credible and informative resource for those seeking to delve into the complex relationship between pesticide usage and its potential health implications.
+
+- [Dataset 2] (https://www.californiahealthmaps.org/?areatype=county&address=021&sex=Both&site=AllSite&race=&year=05yr&overlays=labels&choropleth=AAIR):
+
+Data hosted on the California Health Maps platform. This dataset is focused on providing comprehensive health statistics within the context of California counties.
+
+The dataset encompasses a diverse array of health-related information, potentially including disease incidence rates, demographics, and other health indicators. By utilizing the provided URL parameters, users can tailor the dataset to their specific needs, filtering data by attributes such as sex, site, race, and year. The presence of the choropleth visualization ("choropleth=AAIR") indicates that the dataset's data presentation is enhanced through color-coded maps. This visual approach facilitates the identification of trends and disparities in health metrics across various counties in California.
+
+Researchers, healthcare professionals, policymakers, and analysts can leverage this dataset to gain insights into health patterns, make informed decisions, and conduct in-depth analyses at the county level. The dataset's emphasis on geographical granularity and customizable filters contributes to its potential for informing public health research, resource allocation, and policy formulation.
+  
+- [Dataset 3] (https://www.cdpr.ca.gov/docs/emon/grndwtr/plss_shapefiles.htm):
+
+The source provides shapefiles pertaining to the Public Land Survey System (PLSS). PLSS is a framework used for surveying land parcels in the United States, offering a systematic method for parcel identification and management. These shapefiles encompass geographic data that define the boundaries and divisions of land parcels within the PLSS structure.
+
+This dataset, sourced from the California Department of Pesticide Regulation (CDPR), holds potential significance for tasks such as land management, environmental analysis, and geographic information system (GIS) projects. Researchers, analysts, and land administrators can leverage this dataset to gain insights into land parcel delineation, spatial planning, and related areas of study. The dataset contributes valuable geographic context that can aid in decision-making processes and contribute to a deeper understanding of land utilization patterns.
 
 ## Methods and Tools:
 
@@ -43,7 +63,7 @@ This repository contains the code and documentation for the entire data analysis
 
 ## Disclaimer:
 
-This analysis is conducted by a beginner data analyst, and the results should be interpreted with caution. The project aims to foster discussion and provide valuable learning experiences in data analysis techniques and environmental health research.
+This analysis is conducted by a beginner data analyst, and the results should be interpreted with caution. The project aims to foster discussion and provide valuable learning experiences in data analysis techniques and environmental health research. Within the Office of Pesticide Programs, the Health Effects Division conducts an independent assessment of studies carried out on mice and rats. This evaluation aims to determine the potential of pesticides to induce cancer. The conclusions drawn from this unbiased analysis undergo a peer review process led by the Cancer Assessment Review Committee, a panel of qualified experts. Based on their evaluation, the committee proposes a cancer classification. This classification has a significant bearing on how the pesticide is regulated by the Agency, outlining strategies to quantify the level of risk posed to humans. Additionally, there are instances where the EPA seeks supplementary evaluation from the FIFRA Scientific Advisory Panel.
 
 ## Note:
 
