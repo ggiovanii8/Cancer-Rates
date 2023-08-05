@@ -49,13 +49,11 @@ This dataset, sourced from the California Department of Pesticide Regulation (CD
 
 ## Methods and Tools:
 
-- Python programming language for data cleaning, analysis, and visualization.
-
-- Microsoft SQL Server Management Studio & Microsoft Excel for data manipulation and visualization.
-
-- Geographic Information System (GIS) tools for geospatial analysis and mapping.
+- Microsoft SQL Server Management Studio & Microsoft Excel for data manipulation and cleaning.
 
 - Statistical analysis using appropriate methods, such as correlation analysis and regression.
+
+- Tableau for visualization.
 
 ## Project Outline:
 
@@ -70,6 +68,186 @@ This analysis is conducted by a beginner data analyst, and the results should be
 The dataset used in this analysis may be subject to data privacy and usage restrictions. Therefore, it is not suitable for making individual health-related conclusions.
 
 # 1. Analyzing Pesticide Usage in Agriculture Fields in Glenn County, California
+
+Loaded the chemicals datasets from the years 2016-2021. I then combined all the tables into a single table named, "Chemical_AllYears".
+
+<pre>
+```sql
+SELECT TOP (1000) [Year]
+      ,[County]
+      ,[Chemical]
+      ,[Commodity]
+      ,[Pounds]
+      ,[Num_Apps]
+      ,[Area_treated]
+      ,[Unit_treated]
+  FROM [Cancer_Study].[dbo].[Chemical_2016]
+   
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+
+--Combining all the chemical tables
+
+SELECT* 
+Into Chemical_AllYears
+FROM (
+	SELECT * FROM Chemical_2016
+	UNION ALL
+	SELECT * FROM Chemical_2017
+	UNION ALL
+	SELECT * FROM Chemical_2018
+	UNION ALL
+	SELECT * FROM Chemical_2019
+	UNION ALL
+	SELECT * FROM Chemical_2020
+	UNION ALL
+	SELECT * FROM Chemical_2021
+) AS AllChemicals;
+```
+</pre>
+
+Loaded the commodity datasets from the years 2016-2021. I then combined all the commodity tables into a single table named, "Commodity_AllYears".
+
+<pre>
+```sql
+SELECT TOP (1000) [Year]
+      ,[County]
+      ,[Commodity]
+      ,[Chemical]
+      ,[Pounds]
+      ,[Num_Apps]
+      ,[Area_Treated]
+      ,[Unit_treated]
+  FROM [Cancer_Study].[dbo].[Commodity_2016]
+   
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+
+-- Combining all the commodity tables
+
+SELECT *
+INTO Commodity_AllYears
+FROM (
+    SELECT * FROM Commodity_2016
+    UNION ALL
+    SELECT * FROM Commodity_2017
+    UNION ALL
+    SELECT * FROM Commodity_2018
+    UNION ALL
+    SELECT * FROM Commodity_2019
+    UNION ALL
+    SELECT * FROM Commodity_2020
+    UNION ALL
+    SELECT * FROM Commodity_2021
+) AS AllCommodities;
+```
+</pre>
+
+Combining "Chemical_AllYears" and "Commodities_AllYears". Both tables had similar columns. 
+
+<pre>
+```sql
+-- Checking for null values in key columns for linking
+
+SELECT COUNT(*) AS NullCount_Chemical
+FROM Chemical_AllYears
+WHERE Chemical IS NULL;
+
+SELECT COUNT(*) AS NullCount_Commodity
+FROM Commodity_AllYears
+WHERE Chemical IS NULL;
+
+-- Joining Chemical_AllYears with Commodity_AllYears to associate chemicals with commodities
+
+SELECT c.Chemical AS ChemicalName, c.Commodity AS ChemicalCommodity
+FROM Chemical_AllYears c
+INNER JOIN Commodity_AllYears ca ON c.Chemical = ca.Chemical;
+```
+</pre>
+
+Loaded the dataset "List of Classifications – IARC"
+
+<pre>
+```sql
+SELECT TOP (1000) [CAS No#]
+      ,[Agent]
+      ,[Group]
+      ,[Volume]
+      ,[Year]
+      ,[Additional information]
+  FROM [Cancer_Study].[dbo].['List of Classifications – IARC $']
+   
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+
+-- Keeping only the "Agent" and "Group" column.
+   
+SELECT TOP (1000) [Agent], [Group]
+FROM [Cancer_Study].[dbo].['List of Classifications – IARC $']
+WHERE [Group] = 1;
+
+-- Now I'm making it into a new table named, "Cancerous_Chemicals1".
+
+SELECT TOP (1000) [Agent], [Group]
+INTO Group_1_Carocengenic
+FROM [Cancer_Study].[dbo].['List of Classifications – IARC $']
+WHERE [Group] = 1;
+</pre>
+
+Loaded the dataset "p65chemicallist".
+
+<pre>
+```sql
+SELECT TOP (1000) [STATE OF CALIFORNIA]
+      ,[F2]
+      ,[F3]
+      ,[F4]
+      ,[F5]
+      ,[F6]
+  FROM [Cancer_Study].[dbo].[p65chemicalslist$]
+   
+------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------
+
+--Changing column names   
+   
+SELECT [STATE OF CALIFORNIA] AS Chemical,
+       [F2] AS [Type of Toxicity],
+       [F3] AS [Listing Mechanism],
+       [F4] AS [CAS No.],
+       [F5] AS [Date Listed],
+       [F6] AS [NSRL or MADL (µg/day)a]
+FROM [Cancer_Study].[dbo].[p65chemicalslist$];
+
+------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------
+
+--Checking to see if it worked
+   
+SELECT
+    [STATE OF CALIFORNIA] AS Chemical,
+    [F2] AS [Type of Toxicity]
+FROM [Cancer_Study].[dbo].[p65chemicalslist$];
+   
+ ------------------------------------------------------------------------------------------------------
+ ------------------------------------------------------------------------------------------------------
+
+-- Created the new table with an increased column length
+   
+CREATE TABLE [Cancer_Study].[dbo].[Cancerous_Chemicals] (
+    Chemical VARCHAR(500), -- or a higher value
+    [Type of Toxicity] VARCHAR(255)
+);
+
+-- Inserted the selected data into a new table
+   
+INSERT INTO [Cancer_Study].[dbo].[Cancerous_Chemicals] (Chemical, [Type of Toxicity])
+SELECT
+    [STATE OF CALIFORNIA] AS Chemical,
+    [F2] AS [Type of Toxicity]
+FROM [Cancer_Study].[dbo].[p65chemicalslist$];
+```
+</pre>
 
 # Conclusion 
 Pesticides find extensive application in agriculture, various occupational settings, and homes. A subset of the chemicals present in pesticides has been associated with cancer based on findings from laboratory experiments and epidemiological studies. Nevertheless, definitive proof connecting overall pesticide usage to cancer remains inconclusive.
