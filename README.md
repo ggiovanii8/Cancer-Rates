@@ -249,6 +249,32 @@ FROM [Cancer_Study].[dbo].[p65chemicalslist$];
 ```
 </pre>
 
+Going to filter out only the cancerous chemicals from the column titled, "Type of Toxicity" and create a new table named, "Cancerous_Chemicals2"
+
+<pre>
+```sql
+ELECT TOP (1000) [Chemical]
+      ,[Type of Toxicity]
+  FROM [Cancer_Study].[dbo].[Cancerous_Chemicals]
+
+------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------
+
+--filtering out only the cancerous chemicals
+	
+SELECT [Chemical], [Type of Toxicity]
+INTO [Cancer_Study].[dbo].[Filtered_Cancerous_Chemicals]
+FROM [Cancer_Study].[dbo].[Cancerous_Chemicals]
+WHERE [Type of Toxicity] = 'cancer';
+
+--making a new table for the cancerous chemicals
+
+SELECT *
+INTO [Cancer_Study].[dbo].[Cancerous_Chemicals2]
+FROM [Cancer_Study].[dbo].[Filtered_Cancerous_Chemicals];
+```
+</pre>
+
 # Conclusion 
 Pesticides find extensive application in agriculture, various occupational settings, and homes. A subset of the chemicals present in pesticides has been associated with cancer based on findings from laboratory experiments and epidemiological studies. Nevertheless, definitive proof connecting overall pesticide usage to cancer remains inconclusive.
 
