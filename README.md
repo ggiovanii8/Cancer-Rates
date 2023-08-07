@@ -69,7 +69,7 @@ The dataset used in this analysis may be subject to data privacy and usage restr
 
 # 1. Analyzing Pesticide Usage in Agriculture Fields in Glenn County, California
 
-Loaded the chemicals datasets from the years 2016-2021. I then combined all the tables into a single table named, "Chemical_AllYears".
+Loaded the chemicals datasets from the years 2016-2021. I then combined all the tables into a single table named, 'Chemical_AllYears'.
 
 <pre>
 ```sql
@@ -106,7 +106,7 @@ FROM (
 ```
 </pre>
 
-Loaded the commodity datasets from the years 2016-2021. I then combined all the commodity tables into a single table named, "Commodity_AllYears".
+Loaded the commodity datasets from the years 2016-2021. I then combined all the commodity tables into a single table named, 'Commodity_AllYears'.
 
 <pre>
 ```sql
@@ -143,7 +143,7 @@ FROM (
 ```
 </pre>
 
-Combining "Chemical_AllYears" and "Commodities_AllYears". Both tables had similar columns. 
+Combining 'Chemical_AllYears' and 'Commodities_AllYears'. Both tables had similar columns. 
 
 <pre>
 ```sql
@@ -165,7 +165,7 @@ INNER JOIN Commodity_AllYears ca ON c.Chemical = ca.Chemical;
 ```
 </pre>
 
-Loaded the dataset "List of Classifications – IARC"
+Loaded the dataset 'List of Classifications – IARC'.
 
 <pre>
 ```sql
@@ -180,13 +180,13 @@ SELECT TOP (1000) [CAS No#]
 -------------------------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------------------------
 
--- Keeping only the "Agent" and "Group" column.
+-- Keeping only the 'Agent' and 'Group' column.
    
 SELECT TOP (1000) [Agent], [Group]
 FROM [Cancer_Study].[dbo].['List of Classifications – IARC $']
 WHERE [Group] = 1;
 
--- Now I'm making it into a new table named, "Cancerous_Chemicals1".
+-- Now I'm making it into a new table named, 'Cancerous_Chemicals1'.
 
 SELECT TOP (1000) [Agent], [Group]
 INTO Group_1_Carocengenic
@@ -194,7 +194,7 @@ FROM [Cancer_Study].[dbo].['List of Classifications – IARC $']
 WHERE [Group] = 1;
 </pre>
 
-Loaded the dataset "p65chemicallist".
+Loaded the dataset 'p65chemicallist'.
 
 <pre>
 ```sql
@@ -249,7 +249,7 @@ FROM [Cancer_Study].[dbo].[p65chemicalslist$];
 ```
 </pre>
 
-Going to filter out only the cancerous chemicals from the column titled, "Type of Toxicity" and create a new table named, "Cancerous_Chemicals2"
+Going to filter out only the cancerous chemicals from the column titled, 'Type of Toxicity' and create a new table named, 'Cancerous_Chemicals2'
 
 <pre>
 ```sql
@@ -271,7 +271,44 @@ WHERE [Type of Toxicity] = 'cancer';
 
 SELECT *
 INTO [Cancer_Study].[dbo].[Cancerous_Chemicals2]
-FROM [Cancer_Study].[dbo].[Filtered_Cancerous_Chemicals];
+FROM [Cancer_Study].[dbo].[Carcinogenic];
+```
+</pre>
+
+I filtered unique carcinogenic substances. 
+
+<pre>
+```sql
+SELECT DISTINCT [Carcinogenic_Substance]
+INTO [Cancer_Study].[dbo].[Carcinogenic_Distinct]
+FROM [Cancer_Study].[dbo].[Carcinogenic]
+```
+</pre>
+
+Finding any values in the 'Carcinogenic_Substance' column of the 'Carcinogenic' table match with values in the 'Chemical' column of the 'Chemical_AllYears' table.
+
+<pre>
+```sql
+SELECT DISTINCT c.Carcinogenic_Substance
+FROM Carcinogenic c
+INNER JOIN Chemical_AllYears ca ON c.Carcinogenic_Substance = ca.Chemical;
+```
+</pre>
+
+Created a new table named 'Matching_Chemicals' to store the chemicals that match between the 'Carcinogenic' table and the 'Chemical_AllYears' table. I wanted to match them based on the 'Carcinogenic_Substance' column in the 'Carcinogenic' table and the 'Chemical' column in the 'Chemical_AllYears' table.
+
+<pre>
+```sql
+-- Create the new table
+CREATE TABLE [Cancer_Study].[dbo].[Matching_Chemicals] (
+    [Chemical] VARCHAR(255) -- Change the data type if needed
+);
+
+-- Insert matching chemicals from the Carcinogenic table into the new table
+INSERT INTO [Cancer_Study].[dbo].[Matching_Chemicals] ([Chemical])
+SELECT ca.[Chemical]
+FROM [Cancer_Study].[dbo].[Carcinogenic] car
+JOIN [Cancer_Study].[dbo].[Chemical_AllYears] ca ON car.[Carcinogenic_Substance] = ca.[Chemical];
 ```
 </pre>
 
