@@ -55,13 +55,10 @@ This dataset, sourced from the California Department of Pesticide Regulation (CD
 
 - Tableau for visualization.
 
-## Project Outline:
-
-This repository contains the code and documentation for the entire data analysis process, including data collection, cleaning, preprocessing, exploratory data analysis (EDA), statistical analysis, geospatial visualization, and interpretation of results. The project also includes a literature review to identify cancer-causing ingredients in pesticides used in the area.
 
 ## Disclaimer:
 
-This analysis is conducted by a beginner data analyst, and the results should be interpreted with caution. The project aims to foster discussion and provide valuable learning experiences in data analysis techniques and environmental health research. Within the Office of Pesticide Programs, the Health Effects Division conducts an independent assessment of studies carried out on mice and rats. This evaluation aims to determine the potential of pesticides to induce cancer. The conclusions drawn from this unbiased analysis undergo a peer review process led by the Cancer Assessment Review Committee, a panel of qualified experts. Based on their evaluation, the committee proposes a cancer classification. This classification has a significant bearing on how the pesticide is regulated by the Agency, outlining strategies to quantify the level of risk posed to humans. Additionally, there are instances where the EPA seeks supplementary evaluation from the FIFRA Scientific Advisory Panel.
+This repository contains the code and documentation for the entire data analysis process, including data collection, cleaning, preprocessing, exploratory data analysis (EDA), statistical analysis, geospatial visualization, and interpretation of results. The project also includes a literature review to identify cancer-causing ingredients in pesticides used in the area. This analysis is conducted by a beginner data analyst, and the results should be interpreted with caution. The project aims to foster discussion and provide valuable learning experiences in data analysis techniques and environmental health research. Within the Office of Pesticide Programs, the Health Effects Division conducts an independent assessment of studies carried out on mice and rats. This evaluation aims to determine the potential of pesticides to induce cancer. The conclusions drawn from this unbiased analysis undergo a peer review process led by the Cancer Assessment Review Committee, a panel of qualified experts. Based on their evaluation, the committee proposes a cancer classification. This classification has a significant bearing on how the pesticide is regulated by the Agency, outlining strategies to quantify the level of risk posed to humans. Additionally, there are instances where the EPA seeks supplementary evaluation from the FIFRA Scientific Advisory Panel.
 
 ## Note:
 
@@ -194,7 +191,7 @@ FROM [Cancer_Study].[dbo].['List of Classifications – IARC $']
 WHERE [Group] = 1;
 </pre>
 
-Loaded the dataset 'p65chemicallist'.
+Loaded the dataset 'p65chemicallist'. Dataset that displays chemicals that have been studied. Shows us what chemicals are cancerous and which are developmental, meaning that the chemical can lead to cancer after a certain amount of exposur.
 
 <pre>
 ```sql
@@ -311,6 +308,33 @@ FROM [Cancer_Study].[dbo].[Carcinogenic] car
 JOIN [Cancer_Study].[dbo].[Chemical_AllYears] ca ON car.[Carcinogenic_Substance] = ca.[Chemical];
 ```
 </pre>
+
+After isolating Group 1 carcinogenic chemicals through careful filtering of various datasets, my next step involves the creation of a new table that presents these Group 1 carcinogenic chemicals alongside the corresponding commodities onto which they were applied. This table will also provide insights into the quantities of these chemicals used, measured in pounds, as well as the frequency of their application in terms of the number of applications.
+
+<pre>
+```sql
+ -- Creating a new table to store the results
+
+CREATE TABLE [Cancer_Study].[dbo].[Matching_Commodities] (
+    Chemical VARCHAR(255),
+    Commodity VARCHAR(255),
+    Pounds DECIMAL(18, 2),
+    Num_Apps INT
+);
+
+-- Insert the matching chemicals and their corresponding information
+
+INSERT INTO [Cancer_Study].[dbo].[Matching_Commodities] (Chemical, Commodity, Pounds, Num_Apps)
+SELECT ca.[Chemical], ca.[Commodity], ca.[Pounds], ca.[Num_Apps]
+FROM [Cancer_Study].[dbo].[Chemical_AllYears] ca
+INNER JOIN [Cancer_Study].[dbo].[Matching_Chemicals] mc ON ca.[Chemical] = mc.[Chemical];
+
+-- Displaying the contents of the new table
+
+SELECT * FROM [Cancer_Study].[dbo].[Matching_Commodities];
+```
+</pre>
+
 
 # Conclusion 
 Pesticides find extensive application in agriculture, various occupational settings, and homes. A subset of the chemicals present in pesticides has been associated with cancer based on findings from laboratory experiments and epidemiological studies. Nevertheless, definitive proof connecting overall pesticide usage to cancer remains inconclusive.
