@@ -68,7 +68,6 @@ The dataset used in this analysis may be subject to data privacy and usage restr
 
 Loaded the chemicals datasets from the years 2016-2021. I then combined all the tables into a single table named, 'Chemical_AllYears'.
 
-<pre>
 ```sql
 SELECT TOP (1000) [Year]
       ,[County]
@@ -105,7 +104,6 @@ FROM (
 
 Loaded the commodity datasets from the years 2016-2021. I then combined all the commodity tables into a single table named, 'Commodity_AllYears'.
 
-<pre>
 ```sql
 SELECT TOP (1000) [Year]
       ,[County]
@@ -142,29 +140,39 @@ FROM (
 
 Combining 'Chemical_AllYears' and 'Commodities_AllYears'. Both tables had similar columns. 
 
-<pre>
 ```sql
--- Checking for null values in key columns for linking
+  -- Created the new table
 
-SELECT COUNT(*) AS NullCount_Chemical
-FROM Chemical_AllYears
-WHERE Chemical IS NULL;
+CREATE TABLE [Cancer_Study].[dbo].[Chemical_And_Commodity_2016_2021] (
+    Chemical VARCHAR(255),
+    Commodity VARCHAR(255),
+    Pounds DECIMAL(18, 2),
+    Num_Apps INT,
+    Area_treated DECIMAL(18, 2)
+);
 
-SELECT COUNT(*) AS NullCount_Commodity
-FROM Commodity_AllYears
-WHERE Chemical IS NULL;
+-- Insert data from Chemical_AllYears
 
--- Joining Chemical_AllYears with Commodity_AllYears to associate chemicals with commodities
+INSERT INTO [Cancer_Study].[dbo].[Chemical_And_Commodity_2016_2021]
+(Chemical, Commodity, Pounds, Num_Apps, Area_treated)
+SELECT Chemical, Commodity, Pounds, Num_Apps, Area_treated
+FROM [Cancer_Study].[dbo].[Chemical_AllYears]
+WHERE Year BETWEEN 2016 AND 2021;
 
-SELECT c.Chemical AS ChemicalName, c.Commodity AS ChemicalCommodity
-FROM Chemical_AllYears c
-INNER JOIN Commodity_AllYears ca ON c.Chemical = ca.Chemical;
+-- Insert data from Commodity_AllYears
+
+INSERT INTO [Cancer_Study].[dbo].[Chemical_And_Commodity_2016_2021]
+(Chemical, Commodity, Pounds, Num_Apps, Area_treated)
+SELECT Chemical, Commodity, Pounds, Num_Apps, Area_treated
+FROM [Cancer_Study].[dbo].[Commodity_AllYears]
+WHERE Year BETWEEN 2016 AND 2021;
 ```
 </pre>
 
+# INSERT VISUAL REPRESENTATION OF DATA COMBINATION
+
 Loaded the dataset 'List of Classifications – IARC'.
 
-<pre>
 ```sql
 SELECT TOP (1000) [CAS No#]
       ,[Agent]
@@ -189,11 +197,11 @@ SELECT TOP (1000) [Agent], [Group]
 INTO Group_1_Carocengenic
 FROM [Cancer_Study].[dbo].['List of Classifications – IARC $']
 WHERE [Group] = 1;
+```
 </pre>
 
 Loaded the dataset 'p65chemicallist'. Dataset that displays chemicals that have been studied. Shows us what chemicals are cancerous and which are developmental, meaning that the chemical can lead to cancer after a certain amount of exposure.
 
-<pre>
 ```sql
 SELECT TOP (1000) [STATE OF CALIFORNIA]
       ,[F2]
@@ -248,7 +256,6 @@ FROM [Cancer_Study].[dbo].[p65chemicalslist$];
 
 Going to filter out only the cancerous chemicals from the column titled, 'Type of Toxicity' and create a new table named, 'Cancerous_Chemicals2'
 
-<pre>
 ```sql
 ELECT TOP (1000) [Chemical]
       ,[Type of Toxicity]
@@ -274,7 +281,6 @@ FROM [Cancer_Study].[dbo].[Carcinogenic];
 
 I filtered unique carcinogenic substances. 
 
-<pre>
 ```sql
 SELECT DISTINCT [Carcinogenic_Substance]
 INTO [Cancer_Study].[dbo].[Carcinogenic_Distinct]
@@ -284,7 +290,6 @@ FROM [Cancer_Study].[dbo].[Carcinogenic]
 
 Finding any values in the 'Carcinogenic_Substance' column of the 'Carcinogenic' table match with values in the 'Chemical' column of the 'Chemical_AllYears' table.
 
-<pre>
 ```sql
 SELECT DISTINCT c.Carcinogenic_Substance
 FROM Carcinogenic c
@@ -294,9 +299,9 @@ INNER JOIN Chemical_AllYears ca ON c.Carcinogenic_Substance = ca.Chemical;
 
 Created a new table named 'Matching_Chemicals' to store the chemicals that match between the 'Carcinogenic' table and the 'Chemical_AllYears' table. I wanted to match them based on the 'Carcinogenic_Substance' column in the 'Carcinogenic' table and the 'Chemical' column in the 'Chemical_AllYears' table.
 
-<pre>
 ```sql
 -- Create the new table
+	
 CREATE TABLE [Cancer_Study].[dbo].[Matching_Chemicals] (
     [Chemical] VARCHAR(255) -- Change the data type if needed
 );
@@ -311,30 +316,33 @@ JOIN [Cancer_Study].[dbo].[Chemical_AllYears] ca ON car.[Carcinogenic_Substance]
 
 After isolating Group 1 carcinogenic chemicals through careful filtering of various datasets, my next step involves the creation of a new table that presents these Group 1 carcinogenic chemicals alongside the corresponding commodities onto which they were applied. This table will also provide insights into the quantities of these chemicals used, measured in pounds, as well as the frequency of their application in terms of the number of applications.
 
-<pre>
 ```sql
- -- Creating a new table to store the results
+--Creating Permament Table
 
-CREATE TABLE [Cancer_Study].[dbo].[Matching_Commodities] (
-    Chemical VARCHAR(255),
-    Commodity VARCHAR(255),
-    Pounds DECIMAL(18, 2),
-    Num_Apps INT
-);
-
--- Insert the matching chemicals and their corresponding information
-
-INSERT INTO [Cancer_Study].[dbo].[Matching_Commodities] (Chemical, Commodity, Pounds, Num_Apps)
-SELECT ca.[Chemical], ca.[Commodity], ca.[Pounds], ca.[Num_Apps]
-FROM [Cancer_Study].[dbo].[Chemical_AllYears] ca
-INNER JOIN [Cancer_Study].[dbo].[Matching_Chemicals] mc ON ca.[Chemical] = mc.[Chemical];
-
--- Displaying the contents of the new table
-
-SELECT * FROM [Cancer_Study].[dbo].[Matching_Commodities];
+CREATE VIEW [dbo].[Toxic_Chemicals_on_Commodities]
+AS
+SELECT cac.Chemical, cac.Commodity, cac.Pounds, cac.Num_Apps, cac.Area_treated
+FROM [Chemical_And_Commodity_2016_2021] cac
+INNER JOIN [Matching_Chemicals] mc ON cac.Chemical = mc.Chemical;
 ```
 </pre>
 
+Summarized view of the total pounds, total number of applications, and total area treated for each chemical-commodity combination.\
+
+```sql
+SELECT Chemical, Commodity, SUM(Pounds) AS Total_Pounds, SUM(Num_Apps) AS Total_Num_Apps, SUM(Area_treated) AS Total_Area_treated
+FROM [Cancer_Study].[dbo].[Toxic_Chemicals_on_Commodities]
+GROUP BY Chemical, Commodity;
+
+--Creating Permament Table
+
+CREATE VIEW [dbo].[Sum_Chem_Comm]
+AS
+SELECT Chemical, Commodity, SUM(Pounds) AS Total_Pounds, SUM(Num_Apps) AS Total_Num_Apps, SUM(Area_treated) AS Total_Area_treated
+FROM [Cancer_Study].[dbo].[Toxic_Chemicals_on_Commodities]
+GROUP BY Chemical, Commodity;
+```
+</pre>
 
 # Conclusion 
 Pesticides find extensive application in agriculture, various occupational settings, and homes. A subset of the chemicals present in pesticides has been associated with cancer based on findings from laboratory experiments and epidemiological studies. Nevertheless, definitive proof connecting overall pesticide usage to cancer remains inconclusive.
