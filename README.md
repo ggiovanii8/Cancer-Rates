@@ -191,7 +191,7 @@ FROM [Cancer_Study].[dbo].['List of Classifications – IARC $']
 WHERE [Group] = 1;
 </pre>
 
-Loaded the dataset 'p65chemicallist'. Dataset that displays chemicals that have been studied. Shows us what chemicals are cancerous and which are developmental, meaning that the chemical can lead to cancer after a certain amount of exposur.
+Loaded the dataset 'p65chemicallist'. Dataset that displays chemicals that have been studied. Shows us what chemicals are cancerous and which are developmental, meaning that the chemical can lead to cancer after a certain amount of exposure.
 
 <pre>
 ```sql
