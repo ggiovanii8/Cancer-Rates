@@ -169,8 +169,6 @@ WHERE Year BETWEEN 2016 AND 2021;
 ```
 </pre>
 
-# INSERT VISUAL REPRESENTATION OF DATA COMBINATION
-
 Loaded the dataset 'List of Classifications – IARC'.
 
 ```sql
